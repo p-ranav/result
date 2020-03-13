@@ -39,6 +39,13 @@ struct result {
     }
     return false;
   }
+
+  bool contains_err(const E &this_value) {
+    if (is_err()) {
+      return std::visit([&this_value](auto& v) { return v.value == this_value; }, value);
+    }
+    return false;
+  }  
   
 };
 
