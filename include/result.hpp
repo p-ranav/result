@@ -15,32 +15,29 @@ template <typename E> struct err {
 template <typename T, typename E>
 struct result {
 
-  enum class state {
-    ok,
-    err
-  };
-  
-  state state_;
   std::variant<ok<T>, err<E>> value;
 
-  result(::ok<T> val) : state_(state::ok), value(val) {}
-  result(::err<E> val) : state_(state::err), value(val) {}
+  result(const ok<T> &val) : value(val) {}
+  result(const err<E> &val) : value(val) {}
 
-  bool is_ok() const { return state_ == state::ok; }
-  bool is_err() const { return state_ == state::err; }
+  bool is_ok() const { return std::holds_alternative<ok<T>>(value); }
+  bool is_err() const { return std::holds_alternative<err<E>>(value); }
 
-  result operator=(::ok<T> val) {
+  result operator=(const ok<T> &val) {
     value = val;
     return *this;
   }
 
-  result operator=(::err<E> val) {
+  result operator=(const err<E> &val) {
     value = val;
     return *this;
   }
 
-  bool contains(T value) {
-    return state_ == state::ok && std::get<ok<T>>(value).value == value;
+  bool contains(const T &this_value) {
+    if (is_ok()) {
+      return std::visit([&this_value](auto& v) { return v.value == this_value; }, value);
+    }
+    return false;
   }
   
 };
