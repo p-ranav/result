@@ -177,6 +177,8 @@ int main() {
       return std::string{"horrible BarError"};
     });
 
+  // value now has type Result<Result<size_t, std::string>, std::string>
+  
   std::cout << value.unwrap() << std::endl; // "bad FooError"
 }
 ```
