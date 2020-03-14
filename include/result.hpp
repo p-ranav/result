@@ -1,5 +1,6 @@
 #include <iostream>
 #include <variant>
+#include <optional>
 
 namespace result {
 
@@ -43,21 +44,24 @@ struct Result {
   bool is_ok() const { return std::holds_alternative<Ok<T>>(value); }
   bool is_err() const { return std::holds_alternative<Err<E>>(value); }
 
-  auto ok() const { return std::get<0>(value); }
-  auto err() const { return std::get<1>(value); }
+  // Converts from Result<T, E> to std::optional<T>.
+  std::optional<T> ok() const { return std::get<0>(value).value; }
+
+  // Converts from Result<T, E> to std::optional<E>.
+  std::optional<E> err() const { return std::get<1>(value).value; }
 
   // Returns res if the result is Ok, otherwise returns the Err value of self.
   Result and_(const Result<T, E>& res) {
     if (is_ok())
       return res;
-    return err();
+    return Err(err().value());
   }
 
   // Synonymous with Result.and_(res)
   Result operator&&(const Result<T, E>& res) {
     if (is_ok())
       return res;
-    return err();
+    return Err(err().value());
   }
 
   // Calls op if the result is Ok, otherwise returns the Err value of self.
@@ -66,7 +70,7 @@ struct Result {
   Result and_then(Function op) {
     if (is_ok())
       return op(unwrap());
-    return err();
+    return Err(err().value());
   }
 
   // Returns res if the result is Err, 
@@ -74,14 +78,14 @@ struct Result {
   Result or_(const Result<T, E>& res) {
     if (is_err())
       return res;
-    return ok();
+    return Ok(ok().value());
   }
 
   // Synonymous with Result.or_(res)
   Result operator||(const Result<T, E>& res) {
     if (is_err())
       return res;
-    return ok();
+    return Ok(ok().value());
   }
 
   // Calls op if the result is Err, 
@@ -90,7 +94,7 @@ struct Result {
   Result or_else(Function op) {
     if (is_err())
       return op(unwrap_err());
-    return ok();
+    return Ok(ok().value());
   }
 
   // Unwraps a result, yielding the content of an Ok. Else, it returns optb.
@@ -169,15 +173,13 @@ struct Result {
   // Unwraps a result, yielding the content of an Ok.
   auto unwrap() const { 
     if (is_ok())
-      return ok().value;
+      return ok().value();
     else
-      throw err().value;
+      throw err().value();
   }
 
   // Unwraps a result, yielding the content of an Ok.
-  // Panics if the value is an Err, 
-  // with a panic message including the passed message, 
-  // and the content of the Err.
+  // Throws if the value is an Err with the `msg` argument
   T expect(const std::string &msg) {
     if (is_ok())
       return unwrap();
@@ -187,19 +189,17 @@ struct Result {
   // Unwraps a result, yielding the content of an Err.
   auto unwrap_err() const {
     if (is_err())
-      return err().value;
+      return err().value();
     else 
-      throw ok().value;
+      throw ok().value();
   }
 
   // Unwraps a result, yielding the content of an Err.
-  // Panics if the value is an Ok, 
-  // with a panic message including the passed message, 
-  // and the content of the Ok.
+  // Throws if the value is an Ok with the `msg` argument
   E expect_err(const std::string &msg) {
     if (is_err())
       return unwrap_err();
-    throw msg + ": " + std::to_string(unwrap());
+    throw msg;
   }
 
   // Returns the contained value or a default
