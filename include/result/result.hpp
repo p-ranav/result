@@ -24,12 +24,12 @@ template <typename T, typename E> struct Result {
     return os;
   }
 
-  Result operator=(const Ok<T> &val) {
+  Result operator=(Ok<T> val) {
     value = val;
     return *this;
   }
 
-  Result operator=(const Err<E> &val) {
+  Result operator=(Err<E> val) {
     value = val;
     return *this;
   }

@@ -14,12 +14,11 @@ enum class BarError {
 
 TEST_CASE("Different Return Types" *
           test_suite("map")) {
-  Result<Result<int, FooError>, BarError> res = 
-    Ok(Result<int, FooError>{Err(FooError::Bad)});
+  Result<Result<int, FooError>, BarError> res = Ok(Result<int, FooError>(Err(FooError::Bad)));
 
   auto value = res
     // `map` will only call the closure for `Ok(Result<int, FooError>)`
-    .map([&](Result<int, FooError> res) {
+    .map([](Result<int, FooError> res) {
       // transform `Ok(Result<int, FooError>)` into `Ok(Result<size_t, std::string>)`
       return res
         // transform int to size_t
