@@ -39,6 +39,13 @@ file(GLOB RESULT_TEST_SOURCES
     test_and_then.cpp
     test_or.cpp
     test_or_else.cpp
+    test_unwrap_or.cpp 
+    test_unwrap_or_else.cpp
+    test_unwrap.cpp
+    test_expect.cpp
+    test_unwrap_err.cpp
+    test_expect_err.cpp
+    test_unwrap_or_default.cpp
 )
 set_source_files_properties(main.cpp
     PROPERTIES

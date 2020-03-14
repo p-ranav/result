@@ -1,4 +1,3 @@
-#include <exception>
 #include <iostream>
 #include <optional>
 #include <variant>
@@ -39,7 +38,10 @@ template <typename T, typename E> struct Result {
     return is_err() && unwrap_err() == val.value;
   }
 
+  // Returns true if the result is Ok.
   bool is_ok() const { return std::holds_alternative<Ok<T>>(value); }
+
+  // Returns true if the result is Err.
   bool is_err() const { return std::holds_alternative<Err<E>>(value); }
 
   // Converts from Result<T, E> to std::optional<T>.
@@ -192,7 +194,10 @@ template <typename T, typename E> struct Result {
   T expect(const std::string &msg) {
     if (is_ok())
       return unwrap();
-    throw std::runtime_error(msg);
+    if constexpr (std::is_same_v<E, std::string>)
+      throw msg + ": " + unwrap_err();
+    else
+      throw msg + ": " + std::to_string(unwrap_err());
   }
 
   // Unwraps a result, yielding the content of an Err.
@@ -209,7 +214,10 @@ template <typename T, typename E> struct Result {
   E expect_err(const std::string &msg) {
     if (is_err())
       return unwrap_err();
-    throw std::runtime_error(msg);
+    if constexpr (std::is_same_v<T, std::string>)
+      throw msg + ": " + unwrap();
+    else
+      throw msg + ": " + std::to_string(unwrap());
   }
 
   // Returns the contained value or a default
