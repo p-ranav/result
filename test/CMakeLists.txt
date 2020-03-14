@@ -33,6 +33,10 @@ file(GLOB RESULT_TEST_SOURCES
     test_err.cpp
     test_map.cpp
     test_map_or.cpp
+    test_map_or_else.cpp
+    test_map_err.cpp
+    test_and.cpp
+    test_and_then.cpp
 )
 set_source_files_properties(main.cpp
     PROPERTIES
