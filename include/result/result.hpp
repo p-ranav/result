@@ -4,23 +4,25 @@
 
 namespace result {
 
-template <typename T> struct Ok {
-  T value;
-  Ok(T value) : value(value) {}
-};
-
-template <typename E> struct Err {
-  E value;
-  Err(E value) : value(value) {}
-};
+template <typename T> struct Ok;
+template <typename E> struct Err;  
 
 // Result is a type that represents either success (Ok) or failure (Err).
 template <typename T, typename E> struct Result {
 
   std::variant<Ok<T>, Err<E>> value;
 
+  Result() {}
   Result(const Ok<T> &val) : value(val) {}
   Result(const Err<E> &val) : value(val) {}
+
+  friend std::ostream & operator<<(std::ostream &os, const Result& r) {
+    if (r.is_ok())
+      os << r.unwrap();
+    else 
+      os << r.unwrap_err();
+    return os;
+  }
 
   Result operator=(const Ok<T> &val) {
     value = val;
@@ -228,6 +230,26 @@ template <typename T, typename E> struct Result {
       return unwrap();
     else
       return T();
+  }
+};
+
+template <typename T> struct Ok {
+  T value;
+  Ok(T value) : value(value) {}
+
+  template <typename Function> Result<T, T>
+  and_then(Function op) {
+    return Result<T, T>(*this).and_then(op);
+  }
+};
+
+template <typename E> struct Err {
+  E value;
+  Err(E value) : value(value) {}
+
+  template <typename Function> Result<E, E>
+  and_then(Function op) {
+    return Result<E, E>(*this).and_then(op);
   }
 };
 
