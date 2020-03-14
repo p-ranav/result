@@ -45,7 +45,7 @@ int main() {
 }
 ```
 
-At a module level, creating aliases can be particularly helpful. Errors found in a specific module often have the same `Err` type, so a single alias can succinctly define all associated Results.
+At a module level, creating aliases can be particularly helpful. Errors found in a specific module often have the same `Err` type, so a single alias can succinctly define all associated `Results`.
 
 ```cpp
 #include <iostream>
