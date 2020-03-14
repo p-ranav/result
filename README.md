@@ -3,14 +3,14 @@
 </p>
 
 ## Highlights
-* `Result<T, E>` is a type that represents either success (`Ok`) or failure (`Err`).
-* Inspired by Rust `std::result::Result`.
+* `Result<T, E>` is a type that represents either success (`Ok`) or failure (`Err`)
+* Inspired by Rust `std::result::Result`
 * Requires C++17
 * MIT License
 
 ## Quick Start
 
-`result` is a single header file. Simply include `result/result.hpp` and you're good to go. 
+Simply include `result/result.hpp` and you're good to go. 
 
 ```cpp
 #include <iostream>
