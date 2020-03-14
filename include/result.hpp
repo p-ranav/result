@@ -1,5 +1,5 @@
+#include <iostream>
 #include <variant>
-#include <exception>
 
 namespace result {
 
@@ -31,24 +31,48 @@ struct Result {
     return *this;
   }
 
+  bool operator==(const Ok<T> &val) {
+    return is_ok() && unwrap() == val.value;
+  }
+
+  bool operator==(const Err<E> &val) {
+    return is_err() && unwrap_err() == val.value;
+  }
+
   bool is_ok() const { return std::holds_alternative<Ok<T>>(value); }
   bool is_err() const { return std::holds_alternative<Err<E>>(value); }
 
   auto ok() const { return std::get<0>(value); }
   auto err() const { return std::get<1>(value); }
 
+  // Returns res if the result is Ok, otherwise returns the Err value of self.
+  Result and_(const Result<T, E>& res) {
+    if (is_ok())
+      return res;
+    return err();
+  }
+
+  // Calls op if the result is Ok, otherwise returns the Err value of self.
+  // This function can be used for control flow based on Result values.
+  template <typename Function>
+  Result and_then(Function op) {
+    if (is_ok())
+      return op(unwrap());
+    return err();
+  }
+
   auto unwrap() const { 
     if (is_ok())
       return ok().value;
     else
-      throw std::runtime_error(err().value);
+      throw err().value;
   }
 
   auto unwrap_err() const {
     if (is_err())
       return err().value;
     else 
-      throw std::runtime_error(ok().value);
+      throw ok().value;
   }
 
   bool contains(const T &this_value) {
@@ -64,7 +88,7 @@ struct Result {
     if (is_ok())
       return Result<decltype(fn(T())), E>(Ok<decltype(fn(T()))>(fn(unwrap()))); 
     else
-      return Result<decltype(fn(T())), E>(Err<E>(unwrap_err());
+      return Result<decltype(fn(T())), E>(Err<E>(unwrap_err()));
   }
 
   template <typename Value, typename Function>
