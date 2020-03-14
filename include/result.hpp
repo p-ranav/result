@@ -1,4 +1,5 @@
 #include <variant>
+#include <exception>
 
 namespace result {
 
@@ -36,26 +37,40 @@ struct Result {
   auto ok() const { return std::get<0>(value); }
   auto err() const { return std::get<1>(value); }
 
+  auto unwrap() const { 
+    if (is_ok())
+      return ok().value;
+    else
+      throw std::runtime_error(err().value);
+  }
+
+  auto unwrap_err() const {
+    if (is_err())
+      return err().value;
+    else 
+      throw std::runtime_error(ok().value);
+  }
+
   bool contains(const T &this_value) {
-    return is_ok() ? ok().value == this_value : false;
+    return is_ok() ? unwrap() == this_value : false;
   }
 
   bool contains_err(const E &this_value) {
-    return is_err() ? err().value == this_value : false;
+    return is_err() ? unwrap_err() == this_value : false;
   }
 
   template <typename Function>
   auto map(Function fn) -> Result<decltype(fn(T())), E> {
     if (is_ok())
-      return Result<decltype(fn(T())), E>(Ok<decltype(fn(T()))>(fn(ok().value))); 
+      return Result<decltype(fn(T())), E>(Ok<decltype(fn(T()))>(fn(unwrap()))); 
     else
-      return Result<decltype(fn(T())), E>(Err<E>(err().value));
+      return Result<decltype(fn(T())), E>(Err<E>(unwrap_err());
   }
 
   template <typename Value, typename Function>
   auto map_or(Value default_value, Function fn) -> decltype(fn(T())) {
     if (is_ok())
-      return fn(ok().value);
+      return fn(unwrap());
     else
       return default_value;
   }
