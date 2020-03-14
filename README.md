@@ -103,7 +103,7 @@ int main() {
 
 ## `map` for `Result`
 
-`map` maps a `Result<T, E>` to `Result<U, E>` by applying a function to a contained `Ok` value, leaving an `Err` value untouched. The following example implements a `string -> int` parser function and then uses it's results to multiply two numbers. The multiplication will proceed if both numbers are parsed correctly from their string representation. Else, the resultant error is propagated. 
+`map` maps a `Result<T, E>` to `Result<U, E>` by applying a function to a contained `Ok` value, leaving an `Err` value untouched. The following example implements a `string -> int` parser function and then uses it's results to multiply two numbers. The multiplication will proceed if both numbers are parsed correctly from their string representation. Else, the resultant error is propagated. Note the combined usage of `and_then` and `map` in this example.
 
 ```cpp
 #include <iostream>
