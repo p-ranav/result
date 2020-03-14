@@ -140,7 +140,7 @@ int main() {
 
 ## Different Return Types
 
-The `and_then`, `map` and `map_err` functions are not constrained to return the same type inside their variants. The `map` functions can be given `Ok(T)` and return `Ok(U)`. The `map_err` function can be given `Err(E)` and return `Err(F)`. The `and_then` function can be given `Ok(T)` and return `Ok(U)` or `Err(F)`.
+`map` and `map_err` functions are not constrained to return the same type inside their variants. The `map` functions can be given `Ok(T)` and return `Ok(U)`. The `map_err` function can be given `Err(E)` and return `Err(F)`.
 
 ```cpp
 #include <iostream>
