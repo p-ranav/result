@@ -82,16 +82,14 @@ template <typename T, typename E> struct Result {
 
   // Returns res if the result is Err,
   // otherwise returns the Ok value of self.
-  template <typename U>
-  Result<U, E> or_(const Result<U, E> &res) {
+  Result or_(const Result &res) {
     if (is_err())
       return res;
     return Ok(ok().value());
   }
 
   // Synonymous with Result.or_(res)
-  template <typename U>
-  Result<U, E> operator||(const Result<U, E> &res) {
+  Result operator||(const Result &res) {
     if (is_err())
       return res;
     return Ok(ok().value());
