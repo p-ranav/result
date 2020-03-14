@@ -15,7 +15,7 @@
 ```cpp
 #include <iostream>
 #include <cmath>
-#include "result.hpp"
+#include <result/result.hpp>
 using namespace result;
 
 enum class MathError {
