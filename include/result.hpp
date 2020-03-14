@@ -2,50 +2,59 @@
 
 namespace result {
 
-template <typename T> struct ok {
+template <typename T> struct Ok {
   T value;
-  ok(T value) : value(value) {}
+  Ok(T value) : value(value) {}
 };
 
-template <typename E> struct err {
+template <typename E> struct Err {
   E value;
-  err(E value) : value(value) {}
+  Err(E value) : value(value) {}
 };
 
 template <typename T, typename E>
-struct result {
+struct Result {
 
-  std::variant<ok<T>, err<E>> value;
+  std::variant<Ok<T>, Err<E>> value;
 
-  result(const ok<T> &val) : value(val) {}
-  result(const err<E> &val) : value(val) {}
+  Result(const Ok<T> &val) : value(val) {}
+  Result(const Err<E> &val) : value(val) {}
 
-  bool is_ok() const { return std::holds_alternative<ok<T>>(value); }
-  bool is_err() const { return std::holds_alternative<err<E>>(value); }
-
-  result operator=(const ok<T> &val) {
+  Result operator=(const Ok<T> &val) {
     value = val;
     return *this;
   }
 
-  result operator=(const err<E> &val) {
+  Result operator=(const Err<E> &val) {
     value = val;
     return *this;
   }
+
+  bool is_ok() const { return std::holds_alternative<Ok<T>>(value); }
+  bool is_err() const { return std::holds_alternative<Err<E>>(value); }
+
+  auto ok() const { return std::get<0>(value); }
+  auto err() const { return std::get<1>(value); }
 
   bool contains(const T &this_value) {
-    if (is_ok()) {
-      return std::visit([&this_value](auto& v) { return v.value == this_value; }, value);
-    }
-    return false;
+    return is_ok() ? ok().value == this_value : false;
   }
 
   bool contains_err(const E &this_value) {
-    if (is_err()) {
-      return std::visit([&this_value](auto& v) { return v.value == this_value; }, value);
-    }
-    return false;
-  }  
+    return is_err() ? err().value == this_value : false;
+  }
+
+  template <typename Function>
+  auto map(Function fn) -> Result<decltype(fn(T())), E> {
+    if (is_ok())
+      return std::visit([&fn](auto &v) { 
+        return Result<decltype(fn(T())), E>(Ok<decltype(fn(T()))>(fn(v.value))); 
+      }, value);
+    else
+      return std::visit([&fn](auto &v) { 
+        return Result<decltype(fn(T())), E>(Err<E>(v.value)); 
+      }, value);
+  }
   
 };
 
