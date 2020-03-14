@@ -26,6 +26,7 @@ endif()
 file(GLOB RESULT_TEST_SOURCES
     main.cpp
     test_is_ok.cpp
+    test_is_err.cpp
 )
 set_source_files_properties(main.cpp
     PROPERTIES
