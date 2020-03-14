@@ -61,50 +61,6 @@ struct Result {
     return err();
   }
 
-  // Unwraps a result, yielding the content of an Ok.
-  // Panics if the value is an Err, 
-  // with a panic message including the passed message, 
-  // and the content of the Err.
-  T expect(const std::string &msg) {
-    if (is_ok())
-      return unwrap();
-    throw msg + ": " + std::to_string(unwrap_err());
-  }
-  
-  // Unwraps a result, yielding the content of an Err.
-  // Panics if the value is an Ok, 
-  // with a panic message including the passed message, 
-  // and the content of the Ok.
-  E expect_err(const std::string &msg) {
-    if (is_err())
-      return unwrap_err();
-    throw msg + ": " + std::to_string(unwrap());
-  }
-
-  auto unwrap() const { 
-    if (is_ok())
-      return ok().value;
-    else
-      throw err().value;
-  }
-
-  auto unwrap_err() const {
-    if (is_err())
-      return err().value;
-    else 
-      throw ok().value;
-  }
-
-  // Returns the contained value or a default
-  // if Ok, returns the contained value, 
-  // otherwise if Err, returns the default value for that type.
-  T unwrap_or_default() const {
-    if (is_ok())
-      return unwrap();
-    else 
-      return T();
-  }
-
   bool contains(const T &this_value) {
     return is_ok() ? unwrap() == this_value : false;
   }
@@ -147,7 +103,67 @@ struct Result {
     else
       return err_fn(unwrap_err());
   }
-  
+
+  // Maps a Result<T, E> to Result<T, F> by 
+  // applying a function to a contained Err value, 
+  // leaving an Ok value untouched.
+  //
+  // This function can be used to pass 
+  // through a successful result while handling an error.
+  template <typename Function>
+  auto map_err(Function fn) -> Result<T, decltype(fn(E()))> {
+    if (is_err())
+      return Result<T, decltype(fn(E()))>(Err<decltype(fn(E()))>(fn(unwrap_err()))); 
+    else
+      return Result<T, decltype(fn(E()))>(Ok<T>(unwrap()));
+  }
+
+  // Unwraps a result, yielding the content of an Ok.
+  auto unwrap() const { 
+    if (is_ok())
+      return ok().value;
+    else
+      throw err().value;
+  }
+
+  // Unwraps a result, yielding the content of an Ok.
+  // Panics if the value is an Err, 
+  // with a panic message including the passed message, 
+  // and the content of the Err.
+  T expect(const std::string &msg) {
+    if (is_ok())
+      return unwrap();
+    throw msg + ": " + std::to_string(unwrap_err());
+  }
+
+  // Unwraps a result, yielding the content of an Err.
+  auto unwrap_err() const {
+    if (is_err())
+      return err().value;
+    else 
+      throw ok().value;
+  }
+
+  // Unwraps a result, yielding the content of an Err.
+  // Panics if the value is an Ok, 
+  // with a panic message including the passed message, 
+  // and the content of the Ok.
+  E expect_err(const std::string &msg) {
+    if (is_err())
+      return unwrap_err();
+    throw msg + ": " + std::to_string(unwrap());
+  }
+
+  // Returns the contained value or a default
+  // if Ok, returns the contained value, 
+  // otherwise if Err, returns the default value for that type.
+  T unwrap_or_default() const {
+    if (is_ok())
+      return unwrap();
+    else 
+      return T();
+  }
+
 };
 
 }
