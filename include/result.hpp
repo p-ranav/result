@@ -1,6 +1,7 @@
 #include <iostream>
 #include <variant>
 #include <optional>
+#include <exception>
 
 namespace result {
 
@@ -171,6 +172,7 @@ struct Result {
   }
 
   // Unwraps a result, yielding the content of an Ok.
+  // Throws if the value is an Err
   auto unwrap() const { 
     if (is_ok())
       return ok().value();
@@ -183,10 +185,11 @@ struct Result {
   T expect(const std::string &msg) {
     if (is_ok())
       return unwrap();
-    throw msg + ": " + std::to_string(unwrap_err());
+    throw std::runtime_error(msg);
   }
 
   // Unwraps a result, yielding the content of an Err.
+  // Throws if the value is an Ok,
   auto unwrap_err() const {
     if (is_err())
       return err().value();
@@ -199,7 +202,7 @@ struct Result {
   E expect_err(const std::string &msg) {
     if (is_err())
       return unwrap_err();
-    throw msg;
+    throw std::runtime_error(msg);
   }
 
   // Returns the contained value or a default
