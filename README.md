@@ -12,6 +12,15 @@
 
 Simply include `result/result.hpp` and you're good to go. 
 
+```bash
+git clone https://github.com/p-ranav/result
+cd result
+mkdir build && cd build
+cmake -DRESULT_BUILD_TESTS=ON ..
+make
+./test/test
+```
+
 `Result<T, E>` has two variants:
 
 * `Ok(value)` which indicates that the operation succeeded, and wraps the value returned by the operation. (`value` has type `T`)
