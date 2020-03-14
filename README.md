@@ -60,6 +60,6 @@ auto Op(double x, double y) -> double {
 }
 
 int main() {
-  std::cout << Op(1.0, 10.0) << std::endl;
+  std::cout << Op(100.0, 25.0) << std::endl; // 0.693147
 }
 ```
