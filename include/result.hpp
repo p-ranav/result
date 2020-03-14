@@ -47,13 +47,17 @@ struct Result {
   template <typename Function>
   auto map(Function fn) -> Result<decltype(fn(T())), E> {
     if (is_ok())
-      return std::visit([&fn](auto &v) { 
-        return Result<decltype(fn(T())), E>(Ok<decltype(fn(T()))>(fn(v.value))); 
-      }, value);
+      return Result<decltype(fn(T())), E>(Ok<decltype(fn(T()))>(fn(ok().value))); 
     else
-      return std::visit([&fn](auto &v) { 
-        return Result<decltype(fn(T())), E>(Err<E>(v.value)); 
-      }, value);
+      return Result<decltype(fn(T())), E>(Err<E>(err().value));
+  }
+
+  template <typename Value, typename Function>
+  auto map_or(Value default_value, Function fn) -> decltype(fn(T())) {
+    if (is_ok())
+      return fn(ok().value);
+    else
+      return default_value;
   }
   
 };
