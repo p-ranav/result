@@ -42,6 +42,16 @@ template <typename T, typename E> struct Result {
     return is_err() && unwrap_err() == val.value;
   }
 
+  bool operator==(const Result<T, E> &rhs) const {
+    return ((is_ok() && rhs.is_ok() && unwrap() == rhs.unwrap()) ||
+      (is_err() && rhs.is_err() && unwrap_err() == rhs.unwrap_err())
+    );
+  }
+
+  bool operator!=(const Result<T, E> &rhs) const {
+    return !(*this == rhs);
+  }
+
   // Returns true if the result is Ok.
   bool is_ok() const { return std::holds_alternative<Ok<T>>(value); }
 

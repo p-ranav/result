@@ -47,6 +47,7 @@ file(GLOB RESULT_TEST_SOURCES
     test_expect_err.cpp
     test_unwrap_or_default.cpp
     test_return_types.cpp
+    test_equality.cpp
 )
 set_source_files_properties(main.cpp
     PROPERTIES
