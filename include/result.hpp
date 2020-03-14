@@ -53,6 +53,13 @@ struct Result {
     return err();
   }
 
+  // Synonymous with Result.and_(res)
+  Result operator&&(const Result<T, E>& res) {
+    if (is_ok())
+      return res;
+    return err();
+  }
+
   // Calls op if the result is Ok, otherwise returns the Err value of self.
   // This function can be used for control flow based on Result values.
   template <typename Function>
@@ -65,6 +72,13 @@ struct Result {
   // Returns res if the result is Err, 
   // otherwise returns the Ok value of self.
   Result or_(const Result<T, E>& res) {
+    if (is_err())
+      return res;
+    return ok();
+  }
+
+  // Synonymous with Result.or_(res)
+  Result operator||(const Result<T, E>& res) {
     if (is_err())
       return res;
     return ok();
