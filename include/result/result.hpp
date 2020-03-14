@@ -43,10 +43,18 @@ template <typename T, typename E> struct Result {
   bool is_err() const { return std::holds_alternative<Err<E>>(value); }
 
   // Converts from Result<T, E> to std::optional<T>.
-  std::optional<T> ok() const { return std::get<0>(value).value; }
+  std::optional<T> ok() const {
+    if (is_ok())
+      return std::get<0>(value).value;
+    return {};
+  }
 
   // Converts from Result<T, E> to std::optional<E>.
-  std::optional<E> err() const { return std::get<1>(value).value; }
+  std::optional<E> err() const { 
+    if (is_err())
+      return std::get<1>(value).value;
+    return {};
+  }
 
   // Returns res if the result is Ok, otherwise returns the Err value of self.
   Result and_(const Result<T, E> &res) {
