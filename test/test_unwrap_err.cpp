@@ -15,5 +15,4 @@ TEST_CASE("Unwraps a result, yielding the content of an Err." *
 
   x = Err(std::string{"Emergency Failure"});
   REQUIRE(x.unwrap_err() == "Emergency Failure");
-
 }

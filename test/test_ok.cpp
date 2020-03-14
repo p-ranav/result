@@ -10,5 +10,5 @@ TEST_CASE("Converts from Result<T, E> to std::optional<T>." *
   REQUIRE(x.ok().value() == 2);
 
   x = Err(std::string{"Nothing here"});
-  REQUIRE_FALSE(x.ok().has_value()); 
+  REQUIRE_FALSE(x.ok().has_value());
 }

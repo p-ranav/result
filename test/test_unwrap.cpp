@@ -12,8 +12,7 @@ TEST_CASE("Unwraps a result, yielding the content of an Ok." *
   x = Err(std::string{"Emergency Failure"});
   try {
     x.unwrap();
-  } catch (std::string& err) {
+  } catch (std::string &err) {
     REQUIRE(err == "Emergency Failure");
   }
-
 }

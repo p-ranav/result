@@ -6,7 +6,7 @@ namespace result {
 
 template <typename T> struct Ok {
   T value;
-  Ok(T value) : value(value) {} 
+  Ok(T value) : value(value) {}
 };
 
 template <typename E> struct Err {
@@ -32,7 +32,9 @@ template <typename T, typename E> struct Result {
     return *this;
   }
 
-  bool operator==(const Ok<T> &val) const { return is_ok() && unwrap() == val.value; }
+  bool operator==(const Ok<T> &val) const {
+    return is_ok() && unwrap() == val.value;
+  }
 
   bool operator==(const Err<E> &val) const {
     return is_err() && unwrap_err() == val.value;
@@ -52,23 +54,21 @@ template <typename T, typename E> struct Result {
   }
 
   // Converts from Result<T, E> to std::optional<E>.
-  std::optional<E> err() const { 
+  std::optional<E> err() const {
     if (is_err())
       return std::get<1>(value).value;
     return {};
   }
 
   // Returns res if the result is Ok, otherwise returns the Err value of self.
-  template <typename U>
-  Result<U, E> and_(const Result<U, E> &res) {
+  template <typename U> Result<U, E> and_(const Result<U, E> &res) {
     if (is_ok())
       return res;
     return Err(err().value());
   }
 
   // Synonymous with Result.and_(res)
-  template <typename U>
-  Result<U, E> operator&&(const Result<U, E> &res) {
+  template <typename U> Result<U, E> operator&&(const Result<U, E> &res) {
     if (is_ok())
       return res;
     return Err(err().value());

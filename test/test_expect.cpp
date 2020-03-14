@@ -9,7 +9,7 @@ TEST_CASE("Unwraps a result, yielding the content of an Ok." *
   Result<int, std::string> x = Err(std::string{"emergency failure"});
   try {
     x.expect("Testing expect");
-  } catch (const std::string& err) {
+  } catch (const std::string &err) {
     REQUIRE(err == "Testing expect: emergency failure");
   }
 }

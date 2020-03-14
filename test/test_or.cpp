@@ -4,10 +4,11 @@ using namespace result;
 
 using doctest::test_suite;
 
-TEST_CASE("Returns res if the result is Err, otherwise returns the Ok value of self." *
+TEST_CASE("Returns res if the result is Err, otherwise returns the Ok value of "
+          "self." *
           test_suite("or")) {
   Result<int, std::string> x = Ok(2);
-  Result<int, std::string> y = Err(std::string{"late error"}); 
+  Result<int, std::string> y = Err(std::string{"late error"});
   REQUIRE(x.or_(y) == Ok(2));
 
   x = Err(std::string{"early error"});
@@ -23,10 +24,11 @@ TEST_CASE("Returns res if the result is Err, otherwise returns the Ok value of s
   REQUIRE(x.or_(y) == Ok(2));
 }
 
-TEST_CASE("Returns res if the result is Ok, otherwise returns the Err value of self." *
+TEST_CASE("Returns res if the result is Ok, otherwise returns the Err value of "
+          "self." *
           test_suite("operator||")) {
   Result<int, std::string> x = Ok(2);
-  Result<int, std::string> y = Err(std::string{"late error"}); 
+  Result<int, std::string> y = Err(std::string{"late error"});
   REQUIRE((x || y) == Ok(2));
 
   x = Err(std::string{"early error"});
