@@ -13,6 +13,7 @@ template <typename E> struct Err {
   Err(E value) : value(value) {}
 };
 
+// Result is a type that represents either success (Ok) or failure (Err).
 template <typename T, typename E>
 struct Result {
 
@@ -59,6 +60,39 @@ struct Result {
     if (is_ok())
       return op(unwrap());
     return err();
+  }
+
+  // Returns res if the result is Err, 
+  // otherwise returns the Ok value of self.
+  Result or_(const Result<T, E>& res) {
+    if (is_err())
+      return res;
+    return ok();
+  }
+
+  // Calls op if the result is Err, 
+  // otherwise returns the Ok value of self.
+  template <typename Function>
+  Result or_else(Function op) {
+    if (is_err())
+      return op(unwrap_err());
+    return ok();
+  }
+
+  // Unwraps a result, yielding the content of an Ok. Else, it returns optb.
+  T unwrap_or(T optb) {
+    if (is_ok())
+      return unwrap();
+    return optb;
+  }
+
+  // Unwraps a result, yielding the content of an Ok. 
+  // If the value is an Err then it calls op with its value.
+  template <typename Function>
+  T unwrap_or_else(Function op) {
+    if (is_ok())
+      return unwrap();
+    return op(unwrap_err());
   }
 
   bool contains(const T &this_value) {
