@@ -3,7 +3,7 @@
 </p>
 
 ## Highlights
-* `Result<T, E>` is a type that represents either success (`Ok`) or failure (`Err`)
+* `Result` is a type that represents either success (`Ok`) or failure (`Err`)
 * Requires C++17
 * MIT License
 
