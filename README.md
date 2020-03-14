@@ -19,6 +19,36 @@ Simply include `result/result.hpp` and you're good to go.
 
 ```cpp
 #include <iostream>
+#include <string>
+#include "result.hpp"
+using namespace result;
+
+auto Div(double x, double y) -> Result<double, std::string> {
+  if (y == 0.0)
+    return Err(std::string{"Division by zero"});
+  else
+    return Ok(x / y);
+}
+
+int main() {
+  auto good_result = Div(100.0, 25.0);
+  if (good_result.is_ok()) {
+    // Continue with result
+    std::cout << "Good Reuslt: " << good_result.unwrap() << std::endl;
+  }
+
+  auto bad_result = Div(100.0, 0.0);
+  if (bad_result.is_err()) {
+    auto reason = bad_result.unwrap_err(); // "Division by zero"
+    std::cout << "Bad Result: " << reason << std::endl;
+  }
+}
+```
+
+At a module level, creating aliases can be particularly helpful. Errors found in a specific module often have the same `Err` type, so a single alias can succinctly define all associated Results.
+
+```cpp
+#include <iostream>
 #include <cmath>
 #include <result/result.hpp>
 using namespace result;
