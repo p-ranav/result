@@ -109,7 +109,7 @@ int main() {
 ```cpp
 #include <iostream>
 #include <string>
-#include "result.hpp"
+#include <result/result.hpp>
 using namespace result;
 
 Result<int, std::string> 
@@ -135,5 +135,48 @@ int main() {
 
   auto tt = multiply("t", "2");
   std::cout << tt << std::endl;       // prints "stoi: no conversion"
+}
+```
+
+## Different Return Types
+
+The `and_then`, `map` and `map_err` functions are not constrained to return the same type inside their variants. The `map` functions can be given `Ok(T)` and return `Ok(U)`. The `map_err` function can be given `Err(E)` and return `Err(F)`. The `and_then` function can be given `Ok(T)` and return `Ok(U)` or `Err(F)`.
+
+```cpp
+#include <iostream>
+#include <cmath>
+#include <result/result.hpp>
+using namespace result;
+
+enum class FooError {
+  Bad,
+};
+
+enum class BarError {
+  Horrible,
+};
+
+int main() {
+  Result<Result<int, FooError>, BarError> res = Ok(Result<int, FooError>{Err(FooError::Bad)});
+
+  auto value = res
+    // `map` will only call the closure for `Ok(Result<int, FooError>)`
+    .map([&](Result<int, FooError> res) {
+      // transform `Ok(Result<int, FooError>)` into `Ok(Result<size_t, std::string>)`
+      return res
+        // transform int to size_t
+        .map([](int n) { return static_cast<size_t>(n); })
+
+        // transform `FooError` into std::string
+        .map_err([](FooError e) { return std::string{"bad FooError"}; });
+    })
+
+    // `map_err` will only call the closure for `Err(BadError)
+    .map_err([](BarError e) {
+      // transform `BarError` into std::string
+      return std::string{"horrible BarError"};
+    });
+
+  std::cout << value.unwrap() << std::endl; // "bad FooError"
 }
 ```
