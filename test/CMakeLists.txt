@@ -30,6 +30,9 @@ file(GLOB RESULT_TEST_SOURCES
     test_contains.cpp
     test_contains_err.cpp
     test_ok.cpp
+    test_err.cpp
+    test_map.cpp
+    test_map_or.cpp
 )
 set_source_files_properties(main.cpp
     PROPERTIES

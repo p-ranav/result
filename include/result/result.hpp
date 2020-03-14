@@ -7,7 +7,7 @@ namespace result {
 
 template <typename T> struct Ok {
   T value;
-  Ok(T value) : value(value) {}
+  Ok(T value) : value(value) {} 
 };
 
 template <typename E> struct Err {
@@ -33,9 +33,9 @@ template <typename T, typename E> struct Result {
     return *this;
   }
 
-  bool operator==(const Ok<T> &val) { return is_ok() && unwrap() == val.value; }
+  bool operator==(const Ok<T> &val) const { return is_ok() && unwrap() == val.value; }
 
-  bool operator==(const Err<E> &val) {
+  bool operator==(const Err<E> &val) const {
     return is_err() && unwrap_err() == val.value;
   }
 
