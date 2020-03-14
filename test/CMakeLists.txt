@@ -32,7 +32,7 @@ set_source_files_properties(main.cpp
     COMPILE_DEFINITIONS DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN)
 ADD_EXECUTABLE(RESULT ${RESULT_TEST_SOURCES})
 INCLUDE_DIRECTORIES("../include" ".")
-set_target_properties(RESULT PROPERTIES OUTPUT_NAME tests)
+set_target_properties(RESULT PROPERTIES OUTPUT_NAME test)
 set_property(TARGET RESULT PROPERTY CXX_STANDARD 17)
 
 # Set ${PROJECT_NAME} as the startup project
