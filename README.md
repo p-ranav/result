@@ -100,3 +100,39 @@ int main() {
   std::cout << Op(100.0, 25.0) << std::endl; // 0.693147
 }
 ```
+
+## `map` for `Result`
+
+`map` maps a `Result<T, E>` to `Result<U, E>` by applying a function to a contained `Ok` value, leaving an `Err` value untouched. 
+
+```cpp
+#include <iostream>
+#include <string>
+#include "result.hpp"
+using namespace result;
+
+Result<int, std::string> 
+parse(const std::string &message) {
+  try {
+    return Ok(std::stoi(message));
+  } catch (std::invalid_argument& err) {
+    return Err(std::string(err.what()));
+  }
+}
+
+Result<int, std::string> 
+multiply(const std::string &first_string, const std::string &second_string) {
+  return parse(first_string).and_then([&](auto first) {
+    return parse(second_string).map([&](auto second) { return first * second; });
+  });
+}
+
+int main() {
+  // This still presents a reasonable answer
+  auto twenty = multiply("10", "2");
+  std::cout << twenty << std::endl;   // prints "20"
+
+  auto tt = multiply("t", "2");
+  std::cout << tt << std::endl;       // prints "stoi: no conversion"
+}
+```
